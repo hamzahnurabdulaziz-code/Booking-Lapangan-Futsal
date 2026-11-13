@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="100%" height="100%">
+  <defs>
+    <linearGradient id="grassGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#15803D" />
+      <stop offset="50%" stop-color="#166534" />
+      <stop offset="100%" stop-color="#14532D" />
+    </linearGradient>
+  </defs>
+  <rect width="800" height="500" fill="url(#grassGrad)" />
+  <rect x="50" y="40" width="700" height="420" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="4" rx="6" />
+  <line x1="400" y1="40" x2="400" y2="460" stroke="rgba(255,255,255,0.7)" stroke-width="4" />
+  <circle cx="400" cy="250" r="75" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="4" />
+  <circle cx="400" cy="250" r="6" fill="#FFFFFF" />
+  <rect x="50" y="160" width="120" height="180" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="4" />
+  <rect x="630" y="160" width="120" height="180" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="4" />
+  <!-- Floodlight accents -->
+  <circle cx="40" cy="30" r="15" fill="rgba(254,240,138,0.7)" />
+  <circle cx="760" cy="30" r="15" fill="rgba(254,240,138,0.7)" />
+  <circle cx="40" cy="470" r="15" fill="rgba(254,240,138,0.7)" />
+  <circle cx="760" cy="470" r="15" fill="rgba(254,240,138,0.7)" />
+  <!-- Overlay Tag -->
+  <rect x="230" y="210" width="340" height="80" rx="18" fill="rgba(20,83,45,0.9)" stroke="rgba(255,255,255,0.2)" stroke-width="1.5" />
+  <text x="400" y="246" fill="#F0FDF4" font-family="system-ui, sans-serif" font-size="18" font-weight="700" text-anchor="middle">RUMPUT SINTETIS (C)</text>
+  <text x="400" y="270" fill="#BBF7D0" font-family="system-ui, sans-serif" font-size="13" font-weight="500" text-anchor="middle">Monofilament 50mm • Outdoor 4 Floodlights</text>
+</svg>

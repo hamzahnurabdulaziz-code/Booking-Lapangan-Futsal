@@ -1,0 +1,69 @@
+// Database Markup Language (DBML) untuk FutsalKita
+// Menggunakan MySQL / InnoDB dengan penguncian baris transaksi
+
+Project FutsalKita {
+  database_type: 'MySQL'
+  Note: 'Booking saja; waktu disimpan UTC dan ditampilkan Asia/Jakarta.'
+}
+
+Enum user_role {
+  customer
+  admin
+}
+
+Enum booking_status {
+  confirmed
+  completed
+  cancelled
+}
+
+Table users {
+  id bigint [pk, increment]
+  name varchar(100) [not null]
+  email varchar(255) [not null, unique]
+  email_verified_at timestamp
+  password varchar(255) [not null]
+  phone varchar(30) [not null]
+  role user_role [not null, default: 'customer']
+  remember_token varchar(100)
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table fields {
+  id bigint [pk, increment]
+  name varchar(100) [not null]
+  slug varchar(120) [not null, unique]
+  type varchar(30) [not null, note: 'indoor atau outdoor']
+  description text
+  facilities json
+  image_path varchar(255)
+  is_active boolean [not null, default: true]
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table bookings {
+  id bigint [pk, increment]
+  booking_code varchar(30) [not null, unique]
+  request_key char(36) [not null, unique, note: 'Token idempotensi']
+  user_id bigint [not null]
+  field_id bigint [not null]
+  starts_at datetime [not null, note: 'UTC']
+  ends_at datetime [not null, note: 'UTC']
+  team_name varchar(100)
+  notes text
+  status booking_status [not null, default: 'confirmed']
+  cancelled_at datetime
+  cancellation_reason varchar(500)
+  created_at timestamp
+  updated_at timestamp
+
+  indexes {
+    (field_id, status, starts_at, ends_at)
+    (user_id, starts_at)
+  }
+}
+
+Ref: bookings.user_id > users.id [delete: restrict]
+Ref: bookings.field_id > fields.id [delete: restrict]

@@ -1,0 +1,44 @@
+@import 'tailwindcss';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../views/**/*.blade.php';
+@source '../../app/Livewire/**/*.php';
+@source '../../app/Enums/**/*.php';
+
+@theme {
+    --color-ivory: #F7F7F2;
+    --color-futsal-green: #2F6B3D;
+    --color-futsal-green-hover: #245430;
+    --color-futsal-green-tint: #EBF3ED;
+    --color-futsal-dark: #17231B;
+    --color-futsal-muted: #58695C;
+    --color-futsal-border: #E2E7E2;
+    --font-sans: 'Plus Jakarta Sans', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* Custom utility styles for smooth accessibility and interaction */
+@layer base {
+    body {
+        background-color: var(--color-ivory);
+        color: var(--color-futsal-dark);
+        font-family: var(--font-sans);
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    /* Respect reduced motion preference */
+    @media (prefers-reduced-motion: reduce) {
+        *,
+        ::before,
+        ::after {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.01ms !important;
+            scroll-behavior: auto !important;
+        }
+    }
+}
+
+.focus-ring {
+    @apply focus:outline-none focus-visible:ring-2 focus-visible:ring-[#2F6B3D] focus-visible:ring-offset-2;
+}
