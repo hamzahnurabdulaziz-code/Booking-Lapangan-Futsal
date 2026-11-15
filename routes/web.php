@@ -25,6 +25,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', Home::class)->name('home');
 Route::get('/lapangan', FieldList::class)->name('fields.index');
 Route::get('/lapangan/{field:slug}', FieldDetail::class)->name('fields.show');
+Route::get('/health', fn () => response()->json(['status' => 'healthy', 'timestamp' => now()->toISOString()]))->name('health');
 
 // Authentication Routes
 Route::middleware('guest')->group(function () {

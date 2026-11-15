@@ -1,0 +1,17 @@
+{
+    # Global FrankenPHP configuration
+    frankenphp
+}
+
+:{$PORT:80} {
+    # Set document root to Laravel public directory
+    root * /app/public
+    encode zstd gzip
+
+    # Static assets caching headers
+    @static path /build/* /images/* /favicon.ico /robots.txt
+    header @static Cache-Control "public, max-age=31536000, immutable"
+
+    # Route requests through Laravel's front controller (public/index.php)
+    php_server
+}

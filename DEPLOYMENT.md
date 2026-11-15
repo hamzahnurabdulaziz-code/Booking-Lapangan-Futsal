@@ -1,103 +1,139 @@
-# Panduan Deployment Produksi Vercel — FutsalKita
+# Panduan Deployment Produksi Vercel (Docker + FrankenPHP) — FutsalKita
 
-Dokumen ini menjelaskan arsitektur, konfigurasi teknis, dan langkah demi langkah (*step-by-step*) untuk melakukan deployment aplikasi **FutsalKita** (Laravel 12 + Livewire 3 + Tailwind CSS + Vite) ke platform **Vercel Serverless**.
-
----
-
-## 1. Arsitektur Serverless: Laravel di Vercel
-
-Vercel adalah platform *serverless* berbasis AWS Lambda di lapisan infrastrukturnya. Saat menjalankan aplikasi monolitik Laravel di Vercel, ada beberapa batasan arsitektural yang wajib dipahami:
-
-| Aspek | Server Tradisional (VPS/EC2) | Vercel Serverless | Solusi FutsalKita |
-| :--- | :--- | :--- | :--- |
-| **Filesystem** | Baca & Tulis (*Read-Write*) | Hanya Baca (*Read-Only*) kecuali direktori `/tmp` | View cache & session diarahkan ke `/tmp` atau cookie |
-| **Database** | SQLite lokal atau MySQL localhost | SQLite lokal akan hilang setiap instance cold-start | **Wajib MySQL / PostgreSQL Eksternal** (PlanetScale, Supabase, Aiven, Railway, AWS RDS) |
-| **Session** | `file` session driver di `storage/framework/sessions` | Multi-instance lambda tidak berbagi storage | Gunakan driver `cookie` atau `database` |
-| **Aset Frontend** | Disajikan via Nginx / Apache | Edge CDN Static Hosting Vercel | Vite build (`npm run build`) dipublikasikan ke Edge Vercel |
-| **Eksekusi Cron/Queue** | Supervisor / Crontab sistem | Tidak ada worker daemon persisten | Gunakan Vercel Cron Jobs jika dibutuhkan |
+Dokumen ini menjelaskan konfigurasi deployment resmi aplikasi **FutsalKita** (Laravel 12 + Livewire 3 + Tailwind CSS + Vite) ke platform **Vercel** menggunakan **Docker** dan **FrankenPHP** berdasarkan panduan resmi [Vercel Knowledge Base: Deploy Laravel with Docker](https://vercel.com/kb/guide/laravel-php-with-docker).
 
 ---
 
-## 2. Struktur Konfigurasi Vercel
+## 1. Analisis Masalah: Error `STATIC_BUILD_NO_OUT_DIR`
 
-Repository ini telah dilengkapi dengan dua berkas utama untuk deployment Vercel:
+### Penyebab Error
+Ketika repository Laravel dihubungkan ke Vercel tanpa konfigurasi container, Vercel secara otomatis mendeteksi keberadaan file `package.json` dan mengasumsikan proyek ini adalah *Static Single-Page Application (SPA)* berbasis frontend (seperti React/Vue).
+1. Vercel mengeksekusi perintah build default `npm run build`.
+2. Vite menghasilkan aset statis ke direktori `public/build/`.
+3. Vercel mencari folder output statis (seperti `dist` atau `build`).
+4. Karena folder tersebut tidak ditemukan sesuai ekspektasi builder statis Vercel, proses deployment gagal dengan error:
+   ```text
+   No Output Directory named "..." found after the Build completed. (STATIC_BUILD_NO_OUT_DIR)
+   ```
+5. Lebih jauh lagi, meskipun aset statis disajikan, PHP dan Livewire tidak dapat dieksekusi di atas static hosting biasa karena membutuhkan runtime PHP aktif dan koneksi ke database.
 
-1. **`api/index.php`**: Entry point Lambda yang secara otomatis membuat direktori `/tmp/views`, `/tmp/cache`, dan `/tmp/sessions` sebelum memuat `public/index.php`.
-2. **`vercel.json`**: Konfigurasi runtime PHP community (`vercel-php@0.7.3`), routing aset statis (`/build/*`, `/images/*`, `/favicon.ico`), dan routing fallback ke `api/index.php`.
-
----
-
-## 3. Penyediaan Database Cloud (Wajib untuk Produksi)
-
-Karena filesystem serverless bersifat ephemeral, **SQLite lokal tidak dapat digunakan di Vercel**. Anda membutuhkan basis data MySQL yang dapat diakses publik dengan TLS/SSL:
-
-### Rekomendasi Provider Gratis / Murah:
-1. **Aiven for MySQL** (Gratis trial / $19/bln, dukungan SSL penuh)
-2. **Railway MySQL** (Free trial $5 kredit / $5 per bulan)
-3. **PlanetScale** atau **Supabase (PostgreSQL)**
-4. **AWS RDS / DigitalOcean Managed Database**
-
-### Contoh Konfigurasi `.env` Database Eksternal:
-```env
-DB_CONNECTION=mysql
-DB_HOST=mysql-futsalkita-cluster.aivencloud.com
-DB_PORT=18475
-DB_DATABASE=futsalkita_prod
-DB_USERNAME=avnadmin
-DB_PASSWORD=your_secure_password
-MYSQL_ATTR_SSL_CA=/etc/ssl/certs/ca-certificates.crt
-```
+### Solusi Resmi Vercel: Container-Backed Functions (Docker + FrankenPHP)
+Vercel kini secara resmi mendukung **Container Services** via **FrankenPHP** (yang menggabungkan runtime modern PHP 8.4 dengan web server Caddy berkecepatan tinggi). Dengan arsitektur ini:
+- `buildCommand` dan `outputDirectory` dikosongkan (`""`) pada `vercel.json` agar Vercel tidak lagi menjalankan static builder.
+- Vercel Container Registry (VCR) membangun image menggunakan multi-stage `Dockerfile` (`node:22-alpine` -> `composer:2` -> `dunglas/frankenphp:1-php8.4-alpine`).
+- Caddy menyajikan aset statis `public/build` secara langsung dengan caching header dan meneruskan seluruh permintaan dinamis ke `public/index.php`.
 
 ---
 
-## 4. Environment Variables di Vercel Project Settings
+## 2. Berkas Konfigurasi Deployment
 
-Buka **Vercel Dashboard** &rarr; Pilih Proyek **futsalkita** &rarr; **Settings** &rarr; **Environment Variables**. Masukkan variabel-variabel berikut:
+Repository ini dilengkapi berkas konfigurasi siap pakai:
+
+1. **`Dockerfile` / `Dockerfile.vercel`**:
+   - **Stage 1 (Frontend)**: Menggunakan `node:22-alpine` untuk menjalankan `npm ci` dan `npm run build` yang menghasilkan bundle CSS/JS di `public/build`.
+   - **Stage 2 (Vendor)**: Menggunakan `composer:2` untuk menginstal dependensi produksi PHP secara teroptimasi (`--no-dev --optimize-autoloader --no-scripts`).
+   - **Stage 3 (Runtime)**: Menggunakan `dunglas/frankenphp:1-php8.4-alpine` dengan ekstensi PHP penting:
+     - `pdo_mysql` (koneksi MySQL eksternal dengan SSL)
+     - `pdo_pgsql`
+     - `intl`
+     - `zip`
+     - `gd`
+     - `bcmath`
+     - `opcache`
+   - Mengatur izin hak akses direktori `storage` dan `bootstrap/cache` untuk user `www-data`.
+   - Mengikat port dinamis Vercel via `ENV PORT=80` dan mengeksekusi Caddy server.
+
+2. **`Caddyfile`**:
+   Mengonfigurasi Caddy untuk mengikat port `$PORT`, menyajikan direktori `/app/public`, mengompresi respon (`zstd`, `gzip`), memberikan header cache immutable pada aset `/build/*`, dan meneruskan request dinamis ke PHP server.
+
+3. **`vercel.json`**:
+   Menonaktifkan static output build dan mendaftarkan container service:
+   ```json
+   {
+     "$schema": "https://openapi.vercel.sh/vercel.json",
+     "version": 2,
+     "framework": null,
+     "buildCommand": "",
+     "outputDirectory": "",
+     "git": {
+       "deploymentEnabled": true
+     },
+     "services": {
+       "web": {
+         "image": "dockerfile"
+       }
+     },
+     "routes": [
+       {
+         "src": "/(.*)",
+         "dest": "/"
+       }
+     ]
+   }
+   ```
+
+4. **`.dockerignore`**:
+   Mengecualikan `node_modules`, `vendor`, `.git`, tests, dan `.env` lokal agar build context Docker tetap ringan dan cepat.
+
+---
+
+## 3. Basis Data Eksternal & Sesi Persisten
+
+Dalam arsitektur container serverless Vercel:
+- Setiap instance container bersifat *stateless* (dapat bertambah saat trafik tinggi dan *scale-to-zero* saat tidak ada request).
+- **SQLite lokal tidak dapat digunakan** karena data yang disimpan di dalam container akan hilang saat instance dimatikan atau berganti container.
+- **Wajib menggunakan Database MySQL Cloud Eksternal** yang mendukung koneksi aman via SSL/TLS.
+
+### Rekomendasi Provider MySQL Gratis / Managed:
+1. **Aiven for MySQL** (Free trial, dukungan SSL penuh)
+2. **Railway MySQL** ($5 free credit / bulan)
+3. **AWS RDS / DigitalOcean Managed Database**
+4. **Supabase / Neon** (Jika menggunakan PostgreSQL)
+
+### Sesi Persisten Lintas Kontainer:
+Untuk memastikan sesi login pelanggan dan admin tidak terputus saat request ditangani oleh instance container yang berbeda:
+- Gunakan driver sesi: `SESSION_DRIVER=database` (memanfaatkan tabel `sessions` yang sudah ada di database MySQL) atau `SESSION_DRIVER=cookie` (dienkripsi di sisi browser).
+- Konfigurasi cache: `CACHE_STORE=database` (memanfaatkan tabel `cache`).
+
+---
+
+## 4. Daftar Environment Variables di Vercel
+
+Buka **Vercel Dashboard** &rarr; Pilih Proyek **FutsalKita** &rarr; **Settings** &rarr; **Environment Variables**. Tambahkan variabel-variabel berikut:
 
 ### Core Laravel Settings:
 ```env
 APP_NAME=FutsalKita
 APP_ENV=production
 APP_DEBUG=false
-APP_KEY=base64:YOUR_GENERATED_32_BYTE_APP_KEY
-APP_URL=https://futsalkita.vercel.app
+APP_KEY=base64:GENERATE_KEY_DARI_PHP_ARTISAN_KEY_GENERATE
+APP_URL=https://your-futsalkita-domain.vercel.app
 APP_LOCALE=id
 APP_FALLBACK_LOCALE=id
 ```
 
-### Storage & Serverless Paths:
+### Database Credentials (MySQL Eksternal):
 ```env
-VIEW_COMPILED_PATH=/tmp/views
-APP_CONFIG_CACHE=/tmp/config.php
-APP_EVENTS_CACHE=/tmp/events.php
-APP_PACKAGES_CACHE=/tmp/packages.php
-APP_ROUTES_CACHE=/tmp/routes.php
-APP_SERVICES_CACHE=/tmp/services.php
+DB_CONNECTION=mysql
+DB_HOST=your-database-host.aivencloud.com
+DB_PORT=3306
+DB_DATABASE=futsalkita_prod
+DB_USERNAME=your_username
+DB_PASSWORD=your_secure_password
+MYSQL_ATTR_SSL_CA=/etc/ssl/certs/ca-certificates.crt
+```
+
+### Session & Cache (Multi-Instance Safe):
+```env
+SESSION_DRIVER=database
+SESSION_LIFETIME=120
+SESSION_ENCRYPT=false
+SESSION_SECURE_COOKIE=true
+CACHE_STORE=database
 LOG_CHANNEL=stderr
 ```
 
-### Session & Cache (Stateless):
-```env
-CACHE_STORE=array
-SESSION_DRIVER=cookie
-SESSION_LIFETIME=120
-SESSION_ENCRYPT=false
-SESSION_PATH=/
-SESSION_DOMAIN=null
-SESSION_SECURE_COOKIE=true
-```
-
-### Database Credentials:
-```env
-DB_CONNECTION=mysql
-DB_HOST=YOUR_REMOTE_HOST
-DB_PORT=3306
-DB_DATABASE=YOUR_DB_NAME
-DB_USERNAME=YOUR_DB_USER
-DB_PASSWORD=YOUR_DB_PASSWORD
-```
-
-### Futsal Kita Business Rules:
+### FutsalKita Business Rules:
 ```env
 FUTSAL_TIMEZONE=Asia/Jakarta
 FUTSAL_OPENING_HOUR=8
@@ -109,87 +145,47 @@ FUTSAL_VENUE_ADDRESS="Jl. Lapangan Olahraga No. 10, Jakarta Selatan"
 
 ---
 
-## 5. Langkah-Langkah Deployment via Git / Vercel CLI
+## 5. Langkah Migrasi & Seeding Awal Database Cloud
 
-### Opsi A: Hubungkan Repository GitHub (Rekomendasi untuk Tim)
-1. Buka [https://vercel.com/dashboard](https://vercel.com/dashboard).
-2. Klik **Add New...** &rarr; **Project**.
-3. Hubungkan repository GitHub: `ProjectTKIT/Booking-Lapangan-Futsal`.
-4. Pilih Framework Preset: **Other**.
-5. Atur Build & Output Settings:
-   - **Build Command**: `npm run build`
-   - **Output Directory**: `public`
-   - **Install Command**: `npm install`
-6. Buka bagian **Environment Variables** dan masukkan semua variabel dari Bagian 4.
-7. Klik **Deploy**.
+> **PENTING:** Jangan menjalankan `php artisan migrate` di dalam `Dockerfile` atau saat startup container secara otomatis, karena ketika Vercel meluncurkan beberapa instance sekaligus, migrasi dapat mengalami race condition / deadlock.
 
-### Opsi B: Menggunakan Vercel CLI
+Jalankan migrasi dari mesin lokal Anda yang terhubung ke database cloud:
 ```bash
-# 1. Install Vercel CLI jika belum
-npm install -g vercel
+# 1. Pastikan .env lokal diarahkan ke DB Cloud
+# 2. Jalankan migrasi dan seeding
+php artisan migrate --force
+php artisan db:seed --force
+```
 
-# 2. Login ke akun Vercel
+---
+
+## 6. Prosedur Deployment ke Vercel
+
+### Opsi A: Melalui GitHub Integration (Rekomendasi)
+1. Push branch `feat/pro-uiux-booking-vercel` ke repository remote.
+2. Buat Pull Request ke branch `main`.
+3. Setelah merge ke `main`, Vercel akan otomatis mendeteksi `Dockerfile` / `Dockerfile.vercel` dan `vercel.json`.
+4. Vercel Container Registry akan mem-build image multi-stage dan meluncurkan container.
+
+### Opsi B: Melalui Vercel CLI
+```bash
+# Login ke akun Vercel
 vercel login
 
-# 3. Hubungkan proyek lokal ke Vercel
+# Hubungkan proyek
 vercel link
 
-# 4. Deploy ke Production
+# Deploy ke production
 vercel --prod
 ```
 
 ---
 
-## 6. Menjalankan Migrasi & Seeding Awal di Database Cloud
+## 7. Verifikasi Pasca-Deployment
 
-Karena Vercel tidak memiliki terminal SSH persisten, migrasi database dapat dilakukan dengan menghubungkan terminal lokal ke database cloud yang sama:
-
-1. Di komputer lokal Anda, buka file `.env` sementara atau set variabel:
-   ```bash
-   php artisan migrate --force
-   php artisan db:seed --force
-   ```
-2. Atau jalankan command sekali pakai dari runner CI/CD GitHub Actions:
-   ```yaml
-   - name: Run Database Migrations
-     run: php artisan migrate --force
-     env:
-       DB_CONNECTION: mysql
-       DB_HOST: ${{ secrets.DB_HOST }}
-       DB_DATABASE: ${{ secrets.DB_DATABASE }}
-       DB_USERNAME: ${{ secrets.DB_USERNAME }}
-       DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-   ```
-
----
-
-## 7. Troubleshooting & Solusi Kendala Umum
-
-### 1. Pesan Kesalahan: `500 Server Error` saat pertama kali dibuka
-- **Penyebab**: `APP_KEY` belum diset atau ada folder `storage/framework/views` yang tidak dapat ditulis.
-- **Solusi**: Periksa tab **Logs** di Vercel Dashboard. Pastikan `VIEW_COMPILED_PATH=/tmp/views` telah diset di Environment Variables dan `api/index.php` telah memanggil `mkdir('/tmp/views')`.
-
-### 2. Tampilan UI / CSS Berantakan (*Unstyled*)
-- **Penyebab**: Aset Vite belum ter-build atau path asset di `manifest.json` salah.
-- **Solusi**: Pastikan `npm run build` dijalankan pada build command Vercel dan `public/build` diizinkan rutenya di `vercel.json`.
-
-### 3. Sesi Login Logout Sendiri (*Session Lost*)
-- **Penyebab**: Driver session menggunakan `file`. Setiap kali Vercel menjalankan request di lambda instance baru, session file lama tidak ada.
-- **Solusi**: Ubah `SESSION_DRIVER=cookie` atau `SESSION_DRIVER=database` di Vercel Environment Variables.
-
-### 4. Livewire Mengalami `419 Page Expired`
-- **Penyebab**: CSRF token tidak cocok atau domain session tidak terkonfigurasi.
-- **Solusi**: Pastikan `SESSION_DOMAIN=null` dan `SESSION_SECURE_COOKIE=true` jika menggunakan HTTPS (Vercel otomatis menyediakan HTTPS).
-
----
-
-## 8. Verifikasi Pasca-Deployment Checklist
-
-- [ ] Halaman Beranda (`/`) memuat animasi lapangan futsal dan form pencarian jadwal.
-- [ ] Filter lapangan (`/fields`) menampilkan tarif sewa dan fasilitas lengkap.
-- [ ] Slot waktu terhitung otomatis sesuai durasi 1–3 jam.
-- [ ] Registrasi akun pelanggan baru berhasil.
-- [ ] Password toggle (ikon mata) berfungsi di form login dan register.
-- [ ] Pembuatan booking menghasilkan kode resmi (`FK-YYYYMMDD-XXXX`) dan total biaya tercatat.
-- [ ] Pembatalan booking oleh pelanggan berfungsi sebelum waktu `starts_at`.
-- [ ] Dashboard admin (`/admin/dashboard`) dan manajemen lapangan/booking berfungsi normal.
+Periksa endpoint berikut setelah container aktif:
+1. `GET /health` atau `GET /up` &rarr; Memastikan container hidup dan merespons `200 OK`.
+2. `GET /` &rarr; Memastikan beranda termuat dengan ilustrasi futsal beranimasi dan form pencarian jadwal.
+3. `GET /lapangan` &rarr; Memastikan daftar lapangan dan tarif per jam (`formatted_price`) tampil.
+4. `GET /masuk` &rarr; Menguji form login dengan eye toggle kata sandi.
+5. `POST /booking/konfirmasi` &rarr; Menguji pembuatan booking dan penyimpanan ke database eksternal.
