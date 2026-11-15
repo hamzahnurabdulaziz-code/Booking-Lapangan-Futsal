@@ -196,4 +196,19 @@ class LivewireFrontendTest extends TestCase
             'role' => 'customer',
         ]);
     }
+
+    public function test_health_check_endpoint_returns_ok(): void
+    {
+        $response = $this->get(route('health'));
+        $response->assertStatus(200);
+        $response->assertJson(['status' => 'healthy']);
+    }
+
+    public function test_login_page_renders_cleanly_with_password_toggle(): void
+    {
+        $response = $this->get(route('login'));
+        $response->assertStatus(200);
+        $response->assertSee('showPassword');
+        $response->assertSee('Masuk ke FutsalKita');
+    }
 }

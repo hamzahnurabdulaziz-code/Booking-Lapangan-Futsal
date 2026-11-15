@@ -23,6 +23,7 @@ class Field extends Model
         'slug',
         'type',
         'description',
+        'price_per_hour',
         'facilities',
         'image_path',
         'is_active',
@@ -36,9 +37,18 @@ class Field extends Model
     protected function casts(): array
     {
         return [
+            'price_per_hour' => 'integer',
             'facilities' => 'array',
             'is_active' => 'boolean',
         ];
+    }
+
+    /**
+     * Get formatted Indonesian Rupiah price string.
+     */
+    public function getFormattedPriceAttribute(): string
+    {
+        return 'Rp ' . number_format($this->price_per_hour ?? 150000, 0, ',', '.');
     }
 
     /**

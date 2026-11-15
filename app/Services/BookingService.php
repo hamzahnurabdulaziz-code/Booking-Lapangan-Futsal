@@ -215,7 +215,7 @@ class BookingService
         }
 
         // 4. Concurrency protection via DB Transaction & row lock on the field
-        return DB::transaction(function () use ($fieldId, $startsAtUtc, $endsAtUtc, $user, $teamName, $notes, $requestKey) {
+        return DB::transaction(function () use ($fieldId, $startsAtUtc, $endsAtUtc, $user, $teamName, $notes, $requestKey, $duration) {
             // Lock field row first (deterministic lock order)
             $field = Field::where('id', $fieldId)->lockForUpdate()->first();
 
@@ -256,6 +256,8 @@ class BookingService
                 $bookingCode = "FK-{$datePrefix}-{$randomString}";
             }
 
+            $totalPrice = (int) ($field->price_per_hour ?? 150000) * $duration;
+
             return Booking::create([
                 'booking_code' => $bookingCode,
                 'request_key' => $requestKey,
@@ -265,6 +267,7 @@ class BookingService
                 'ends_at' => $endsAtUtc,
                 'team_name' => $teamName,
                 'notes' => $notes,
+                'total_price' => $totalPrice,
                 'status' => BookingStatus::Confirmed,
             ]);
         });

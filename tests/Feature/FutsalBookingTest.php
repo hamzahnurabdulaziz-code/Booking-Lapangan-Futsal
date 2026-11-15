@@ -363,4 +363,47 @@ class FutsalBookingTest extends TestCase
         $response->assertStatus(200);
         $response->assertSee('Dashboard Ringkas FutsalKita');
     }
+
+    /**
+     * 15. Booking calculates total_price based on field price_per_hour and duration
+     */
+    public function test_booking_calculates_total_price_based_on_field_price_and_duration(): void
+    {
+        $this->activeField->update(['price_per_hour' => 175000]);
+
+        $tz = config('futsal.timezone', 'Asia/Jakarta');
+        $targetDate = Carbon::now($tz)->addDays(5)->toDateString();
+
+        $booking = $this->service->createBooking($this->customer, [
+            'field_id' => $this->activeField->id,
+            'selected_date' => $targetDate,
+            'start_hour' => 16,
+            'duration_hours' => 2,
+        ]);
+
+        $this->assertEquals(350000, $booking->total_price);
+        $this->assertEquals('Rp 350.000', $booking->formatted_total_price);
+        $this->assertDatabaseHas('bookings', [
+            'id' => $booking->id,
+            'total_price' => 350000,
+        ]);
+    }
+
+    /**
+     * 16. Admin can update field price_per_hour via FieldManagement Livewire
+     */
+    public function test_admin_can_update_field_price_per_hour(): void
+    {
+        \Livewire\Livewire::actingAs($this->admin)
+            ->test(\App\Livewire\Admin\FieldManagement::class)
+            ->call('editField', $this->activeField->id)
+            ->set('pricePerHour', 220000)
+            ->call('save')
+            ->assertHasNoErrors();
+
+        $this->assertDatabaseHas('fields', [
+            'id' => $this->activeField->id,
+            'price_per_hour' => 220000,
+        ]);
+    }
 }

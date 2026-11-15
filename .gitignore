@@ -25,3 +25,8 @@ _ide_helper.php
 Homestead.json
 Homestead.yaml
 Thumbs.db
+
+
+# Laravel IDE Helper
+_ide_helper_models.php
+.phpstorm.meta.php

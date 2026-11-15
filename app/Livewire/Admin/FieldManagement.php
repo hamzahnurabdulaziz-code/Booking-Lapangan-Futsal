@@ -19,6 +19,7 @@ class FieldManagement extends Component
     public string $name = '';
     public string $slug = '';
     public string $type = 'indoor';
+    public int $pricePerHour = 150000;
     public string $description = '';
     public string $facilitiesText = '';
     public string $imagePath = '';
@@ -32,6 +33,7 @@ class FieldManagement extends Component
         $this->reset(['editingFieldId', 'name', 'slug', 'type', 'description', 'facilitiesText', 'imagePath', 'isActive']);
         $this->isActive = true;
         $this->type = 'indoor';
+        $this->pricePerHour = 150000;
         $this->showModal = true;
     }
 
@@ -46,6 +48,7 @@ class FieldManagement extends Component
         $this->name = $field->name;
         $this->slug = $field->slug;
         $this->type = $field->type;
+        $this->pricePerHour = (int) ($field->price_per_hour ?? 150000);
         $this->description = $field->description ?? '';
         $this->facilitiesText = is_array($field->facilities) ? implode("\n", $field->facilities) : '';
         $this->imagePath = $field->image_path ?? '';
@@ -62,12 +65,15 @@ class FieldManagement extends Component
         $this->validate([
             'name' => ['required', 'string', 'max:100'],
             'type' => ['required', 'in:indoor,outdoor'],
+            'pricePerHour' => ['required', 'integer', 'min:10000', 'max:2000000'],
             'description' => ['nullable', 'string', 'max:1000'],
             'facilitiesText' => ['nullable', 'string'],
             'imagePath' => ['nullable', 'string', 'max:255'],
         ], [
             'name.required' => 'Nama lapangan wajib diisi.',
             'type.required' => 'Tipe lapangan wajib dipilih.',
+            'pricePerHour.required' => 'Tarif sewa per jam wajib diisi.',
+            'pricePerHour.min' => 'Tarif sewa minimal Rp 10.000.',
         ]);
 
         $facilities = array_filter(
@@ -82,6 +88,7 @@ class FieldManagement extends Component
                 'name' => trim($this->name),
                 'slug' => $slug,
                 'type' => $this->type,
+                'price_per_hour' => $this->pricePerHour,
                 'description' => trim($this->description),
                 'facilities' => array_values($facilities),
                 'image_path' => trim($this->imagePath) ?: null,
@@ -102,6 +109,7 @@ class FieldManagement extends Component
                 'name' => trim($this->name),
                 'slug' => $slug,
                 'type' => $this->type,
+                'price_per_hour' => $this->pricePerHour,
                 'description' => trim($this->description),
                 'facilities' => array_values($facilities),
                 'image_path' => trim($this->imagePath) ?: 'images/placeholder-field.svg',

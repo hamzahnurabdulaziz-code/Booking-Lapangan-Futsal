@@ -1,19 +1,19 @@
 <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
     <!-- Breadcrumb -->
-    <nav class="mb-6 flex items-center gap-2 text-xs font-medium text-[#58695C]">
-        <a href="{{ route('home') }}" class="hover:text-[#2F6B3D]">Beranda</a>
+    <nav class="mb-6 flex items-center gap-2 text-xs font-semibold text-stone-500">
+        <a href="{{ route('home') }}" class="hover:text-emerald-700">Beranda</a>
         <span>/</span>
-        <a href="{{ route('customer.bookings') }}" class="hover:text-[#2F6B3D]">Booking Saya</a>
+        <a href="{{ route('customer.bookings') }}" class="hover:text-emerald-700">Booking Saya</a>
         <span>/</span>
-        <span class="text-[#17231B] font-semibold">{{ $booking->booking_code }}</span>
+        <span class="text-stone-900 font-bold">{{ $booking->booking_code }}</span>
     </nav>
 
-    <div class="bg-white rounded-[28px] p-6 sm:p-10 border border-[#E2E7E2] shadow-sm space-y-8">
+    <div class="bg-white rounded-[28px] p-6 sm:p-10 border border-stone-200/90 shadow-sm space-y-8">
         <!-- Top Title Bar -->
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-stone-100 pb-6">
             <div>
-                <span class="text-xs font-bold uppercase tracking-wider text-[#2F6B3D]">Detail Reservasi</span>
-                <h1 class="text-2xl sm:text-3xl font-extrabold text-[#17231B] tracking-tight mt-0.5 font-mono">
+                <span class="text-xs font-bold uppercase tracking-wider text-emerald-700">Detail Reservasi Resmi</span>
+                <h1 class="text-2xl sm:text-3xl font-extrabold text-stone-900 tracking-tight mt-0.5 font-mono">
                     {{ $booking->booking_code }}
                 </h1>
                 <span class="text-xs text-stone-400 mt-1 block">
@@ -30,27 +30,34 @@
         </div>
 
         <!-- Field & Venue Section -->
-        <div class="p-5 rounded-2xl bg-[#F7F7F2] border border-[#E2E7E2] space-y-3">
+        <div class="p-5 rounded-2xl bg-[#F8FAF8] border border-stone-200 space-y-3">
             <div class="flex items-center justify-between">
-                <h2 class="text-base font-bold text-[#17231B]">{{ $booking->field->name }}</h2>
+                <h2 class="text-base font-bold text-stone-900">{{ $booking->field->name }}</h2>
                 <span class="px-2.5 py-0.5 rounded-md text-[11px] font-bold uppercase bg-stone-200 text-stone-700">
                     {{ ucfirst($booking->field->type) }}
                 </span>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs text-[#58695C] pt-2 border-t border-stone-200/70">
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs text-stone-600 pt-3 border-t border-stone-200/70">
                 <div>
-                    <span>Jadwal Main:</span>
-                    <strong class="text-[#17231B] block text-sm font-semibold mt-0.5">
+                    <span class="text-stone-500">Jadwal Main:</span>
+                    <strong class="text-stone-900 block text-sm font-semibold mt-0.5">
                         {{ $booking->starts_at_local->translatedFormat('l, d F Y') }}
                     </strong>
-                    <span class="text-[#2F6B3D] font-bold block mt-0.5">
+                    <span class="text-emerald-700 font-bold block mt-0.5">
                         {{ $booking->starts_at_local->format('H:i') }} – {{ $booking->ends_at_local->format('H:i') }} WIB
                     </span>
                 </div>
                 <div>
-                    <span>Lokasi Arena:</span>
-                    <strong class="text-[#17231B] block font-medium mt-0.5">{{ config('futsal.venue_address') }}</strong>
+                    <span class="text-stone-500">Total Biaya:</span>
+                    <strong class="text-emerald-800 block text-sm font-extrabold mt-0.5">
+                        {{ $booking->formatted_total_price }}
+                    </strong>
+                    <span class="text-[11px] text-stone-400 block mt-0.5">{{ $booking->duration_hours }} Jam ({{ $booking->field->formatted_price }} / jam)</span>
+                </div>
+                <div>
+                    <span class="text-stone-500">Lokasi Arena:</span>
+                    <strong class="text-stone-900 block font-medium mt-0.5">{{ config('futsal.venue_address') }}</strong>
                 </div>
             </div>
         </div>
@@ -58,13 +65,13 @@
         <!-- Team & Notes -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
             <div class="p-4 rounded-2xl border border-stone-200 bg-stone-50/50">
-                <span class="text-[#58695C] block mb-1">Nama Tim:</span>
-                <strong class="text-sm text-[#17231B]">{{ $booking->team_name ?: 'Tidak dicantumkan' }}</strong>
+                <span class="text-stone-500 block mb-1">Nama Tim:</span>
+                <strong class="text-sm text-stone-900">{{ $booking->team_name ?: 'Tidak dicantumkan' }}</strong>
             </div>
 
             <div class="p-4 rounded-2xl border border-stone-200 bg-stone-50/50">
-                <span class="text-[#58695C] block mb-1">Catatan Tambahan:</span>
-                <p class="text-xs text-[#17231B]">{{ $booking->notes ?: 'Tidak ada catatan khusus' }}</p>
+                <span class="text-stone-500 block mb-1">Catatan Tambahan:</span>
+                <p class="text-xs text-stone-900">{{ $booking->notes ?: 'Tidak ada catatan khusus' }}</p>
             </div>
         </div>
 
@@ -102,33 +109,36 @@
             class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs"
             role="dialog"
             aria-modal="true"
-            @keydown.escape.window="$wire.set('confirmingCancel', false)"
+            aria-labelledby="modal-cancel-detail"
+            @keydown.escape.window="$wire.closeCancelModal()"
         >
-            <div class="bg-white rounded-[24px] max-w-md w-full p-6 sm:p-8 shadow-2xl border border-stone-200 space-y-5">
+            <div class="bg-white rounded-[24px] max-w-md w-full p-6 sm:p-8 shadow-2xl border border-stone-200 space-y-5 animate-in fade-in duration-200">
                 <div class="w-12 h-12 rounded-2xl bg-rose-100 text-rose-600 flex items-center justify-center font-bold text-xl mx-auto">
                     ⚠️
                 </div>
+
                 <div class="text-center">
-                    <h3 class="text-lg font-bold text-[#17231B]">Konfirmasi Pembatalan</h3>
-                    <p class="text-xs text-[#58695C] mt-2">
-                        Apakah Anda yakin ingin membatalkan jadwal ini? Slot waktu akan langsung terbuka kembali bagi pengguna lain.
+                    <h3 id="modal-cancel-detail" class="text-lg font-bold text-stone-900">Konfirmasi Pembatalan Booking</h3>
+                    <p class="text-xs text-stone-600 mt-2 leading-relaxed">
+                        Anda yakin ingin membatalkan jadwal bermain pada <strong class="text-stone-900">{{ $booking->starts_at_local->format('d M Y H:i') }} WIB</strong>? Slot waktu akan dilepaskan secara permanen.
                     </p>
                 </div>
+
                 <div class="pt-2 flex flex-col sm:flex-row items-center justify-end gap-2.5">
                     <button 
                         type="button" 
-                        wire:click="$set('confirmingCancel', false)"
-                        class="w-full sm:w-auto px-4 py-2.5 rounded-xl border border-stone-300 text-stone-700 text-xs font-bold"
+                        wire:click="closeCancelModal"
+                        class="w-full sm:w-auto px-4 py-2.5 rounded-xl border border-stone-300 text-stone-700 hover:bg-stone-50 text-xs font-bold focus-ring"
                     >
-                        Tutup
+                        Kembali
                     </button>
                     <button 
                         type="button" 
                         wire:click="cancelBooking"
                         wire:loading.attr="disabled"
-                        class="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold shadow-sm disabled:opacity-50"
+                        class="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold shadow-sm focus-ring disabled:opacity-50"
                     >
-                        <span wire:loading.remove wire:target="cancelBooking">Ya, Batalkan</span>
+                        <span wire:loading.remove wire:target="cancelBooking">Ya, Batalkan Sekarang</span>
                         <span wire:loading wire:target="cancelBooking">Memproses...</span>
                     </button>
                 </div>
