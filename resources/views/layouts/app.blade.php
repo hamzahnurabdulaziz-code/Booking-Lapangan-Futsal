@@ -11,50 +11,51 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
 </head>
-<body class="min-h-full flex flex-col bg-[#F7F7F2] text-[#17231B] antialiased selection:bg-[#2F6B3D] selection:text-white">
+<body class="min-h-full flex flex-col {{ request()->routeIs('login') ? 'bg-[#061A16] text-white' : (request()->routeIs('admin.*') ? 'bg-[#F8FAFC] text-slate-900' : 'bg-[#F7F7F2] text-[#17231B]') }} antialiased selection:bg-[#2F6B3D] selection:text-white">
 
     <!-- Top Floating Navigation -->
-    <header x-data="{ mobileOpen: false }" class="sticky top-0 z-40 w-full backdrop-blur-md bg-white/90 border-b border-[#E2E7E2] transition-colors">
+    @unless(request()->routeIs('login'))
+    <header x-data="{ mobileOpen: false }" class="sticky top-0 z-40 w-full border-b backdrop-blur-xl transition-colors {{ request()->routeIs('home') ? 'border-emerald-200/20 bg-[#06271D]/85 shadow-[0_8px_32px_rgba(0,0,0,0.12)]' : 'border-[#E2E7E2] bg-white/90' }}">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-20">
                 <!-- Brand / Logo -->
-                <div class="flex items-center gap-3">
-                    <a href="{{ route('home') }}" class="flex items-center gap-2.5 group focus:outline-none focus-visible:ring-2 focus-visible:ring-[#2F6B3D] rounded-xl px-2 py-1">
-                        <div class="w-10 h-10 rounded-xl bg-[#2F6B3D] text-white flex items-center justify-center font-bold text-xl shadow-sm group-hover:bg-[#245430] transition-colors">
+                <div class="flex shrink-0 items-center gap-3">
+                    <a href="{{ route('home') }}" class="flex items-center gap-2.5 group rounded-xl px-2 py-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#2F6B3D]">
+                        <div class="w-10 h-10 rounded-xl flex items-center justify-center font-bold text-xl shadow-sm transition-colors {{ request()->routeIs('home') ? 'bg-[#2F6B3D] text-white group-hover:bg-emerald-600' : 'bg-[#2F6B3D] text-white group-hover:bg-[#245430]' }}">
                             FK
                         </div>
                         <div class="flex flex-col">
-                            <span class="text-xl font-bold tracking-tight text-[#17231B] leading-none">Futsal<span class="text-[#2F6B3D]">Kita</span></span>
-                            <span class="text-[11px] font-medium text-[#58695C] tracking-wide mt-0.5">Booking Arena Futsal</span>
+                            <span class="text-xl font-bold tracking-tight leading-none {{ request()->routeIs('home') ? 'text-white' : 'text-[#17231B]' }}">Futsal<span class="{{ request()->routeIs('home') ? 'text-emerald-300' : 'text-[#2F6B3D]' }}">Kita</span></span>
+                            <span class="mt-0.5 whitespace-nowrap text-[11px] font-medium tracking-wide {{ request()->routeIs('home') ? 'text-emerald-100/80' : 'text-[#58695C]' }}">Booking Arena Futsal</span>
                         </div>
                     </a>
                 </div>
 
                 <!-- Desktop Nav Links -->
-                <nav class="hidden md:flex items-center gap-8 text-[15px] font-medium text-[#17231B]" aria-label="Navigasi Utama">
-                    <a href="{{ route('home') }}" class="hover:text-[#2F6B3D] transition-colors {{ request()->routeIs('home') ? 'text-[#2F6B3D] font-semibold' : '' }}">Beranda</a>
-                    <a href="{{ route('fields.index') }}" class="hover:text-[#2F6B3D] transition-colors {{ request()->routeIs('fields.*') ? 'text-[#2F6B3D] font-semibold' : '' }}">Lapangan</a>
-                    <a href="{{ route('home') }}#cara-booking" class="hover:text-[#2F6B3D] transition-colors">Cara Booking</a>
-                    <a href="{{ route('home') }}#faq" class="hover:text-[#2F6B3D] transition-colors">FAQ</a>
+                <nav class="hidden md:flex shrink-0 items-center gap-4 text-xs font-medium lg:gap-8 lg:text-[15px] {{ request()->routeIs('home') ? 'text-emerald-50' : 'text-[#17231B]' }}" aria-label="Navigasi Utama">
+                    <a href="{{ route('home') }}" class="transition-colors {{ request()->routeIs('home') ? 'text-emerald-300 font-semibold hover:text-lime-300' : 'hover:text-[#2F6B3D]' }}">Beranda</a>
+                    <a href="{{ route('fields.index') }}" class="transition-colors {{ request()->routeIs('home') ? 'hover:text-lime-300' : 'hover:text-[#2F6B3D]' }} {{ request()->routeIs('fields.*') ? 'text-[#2F6B3D] font-semibold' : '' }}">Lapangan</a>
+                    <a href="{{ route('home') }}#cara-booking" class="transition-colors {{ request()->routeIs('home') ? 'hover:text-lime-300' : 'hover:text-[#2F6B3D]' }}">Cara Booking</a>
+                    <a href="{{ route('home') }}#faq" class="transition-colors {{ request()->routeIs('home') ? 'hover:text-lime-300' : 'hover:text-[#2F6B3D]' }}">FAQ</a>
                 </nav>
 
                 <!-- Auth Buttons / User Menu -->
-                <div class="hidden md:flex items-center gap-3">
+                <div class="hidden md:flex items-center gap-2 lg:gap-3">
                     @auth
                         @if(auth()->user()->isAdmin())
-                            <a href="{{ route('admin.dashboard') }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold bg-stone-900 text-white hover:bg-black transition-colors shadow-sm focus-ring">
+                            <a href="{{ route('admin.dashboard') }}" class="inline-flex items-center gap-2 whitespace-nowrap rounded-xl bg-stone-900 px-3 py-2 text-xs font-semibold text-white shadow-sm transition-colors hover:bg-black focus-ring lg:px-4 lg:text-sm">
                                 <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
                                 <span>Panel Admin ku</span>
                             </a>
                         @else
-                            <a href="{{ route('customer.bookings') }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold bg-[#EBF3ED] text-[#2F6B3D] hover:bg-[#dcebdd] transition-colors focus-ring">
+                            <a href="{{ route('customer.bookings') }}" class="inline-flex items-center gap-2 whitespace-nowrap rounded-xl bg-[#EBF3ED] px-3 py-2 text-xs font-semibold text-[#2F6B3D] transition-colors hover:bg-[#dcebdd] focus-ring lg:px-4 lg:text-sm">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                                 <span>Booking Saya sekarang</span>
                             </a>
                         @endif
 
                         <div class="flex items-center gap-2 pl-3 border-l border-[#E2E7E2]">
-                            <span class="text-sm font-medium text-[#17231B] truncate max-w-[140px]">{{ auth()->user()->name }}</span>
+                            <span class="max-w-[96px] truncate whitespace-nowrap text-xs font-medium text-[#17231B] lg:max-w-[140px] lg:text-sm">{{ auth()->user()->name }}</span>
                             <form method="POST" action="{{ route('logout') }}" class="inline">
                                 @csrf
                                 <button type="submit" class="p-2 text-stone-500 hover:text-rose-600 rounded-lg hover:bg-rose-50 transition-colors focus-ring" title="Keluar">
@@ -63,10 +64,10 @@
                             </form>
                         </div>
                     @else
-                        <a href="{{ route('login') }}" class="px-4 py-2 text-sm font-semibold text-[#17231B] hover:text-[#2F6B3D] transition-colors focus-ring rounded-xl">
+                        <a href="{{ route('login') }}" class="whitespace-nowrap rounded-xl px-3 py-2 text-xs font-semibold transition-colors focus-ring lg:px-4 lg:text-sm {{ request()->routeIs('home') ? 'text-emerald-50 hover:text-lime-300' : 'text-[#17231B] hover:text-[#2F6B3D]' }}">
                             Masuk
                         </a>
-                        <a href="{{ route('register') }}" class="inline-flex items-center justify-center px-4 py-2 rounded-xl text-sm font-semibold bg-[#2F6B3D] text-white hover:bg-[#245430] transition-colors shadow-sm focus-ring">
+                        <a href="{{ route('register') }}" class="inline-flex items-center justify-center whitespace-nowrap rounded-xl px-3 py-2 text-xs font-semibold transition-colors shadow-sm focus-ring lg:px-4 lg:text-sm {{ request()->routeIs('home') ? 'bg-gradient-to-r from-emerald-400 to-lime-300 text-[#06271D] hover:from-emerald-300 hover:to-lime-200' : 'bg-[#2F6B3D] text-white hover:bg-[#245430]' }}">
                             Daftar Akun
                         </a>
                     @endauth
@@ -74,7 +75,7 @@
 
                 <!-- Mobile Hamburger Button -->
                 <div class="flex items-center md:hidden">
-                    <button type="button" @click="mobileOpen = !mobileOpen" class="p-2.5 rounded-xl text-stone-700 hover:bg-stone-100 focus-ring" aria-label="Buka menu navigasi" :aria-expanded="mobileOpen">
+                    <button type="button" @click="mobileOpen = !mobileOpen" class="p-2.5 rounded-xl focus-ring {{ request()->routeIs('home') ? 'text-white hover:bg-white/10' : 'text-stone-700 hover:bg-stone-100' }}" aria-label="Buka menu navigasi" :aria-expanded="mobileOpen">
                         <svg x-show="!mobileOpen" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
                         <svg x-show="mobileOpen" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                     </button>
@@ -83,12 +84,12 @@
         </div>
 
         <!-- Mobile Drawer -->
-        <div x-show="mobileOpen" x-transition.opacity.duration.200ms @keydown.escape.window="mobileOpen = false" class="md:hidden border-t border-[#E2E7E2] bg-white px-4 pt-3 pb-6 space-y-3">
+        <div x-show="mobileOpen" x-transition.opacity.duration.200ms @keydown.escape.window="mobileOpen = false" class="md:hidden border-t px-4 pt-3 pb-6 space-y-3 {{ request()->routeIs('home') ? 'border-white/10 bg-[#092B21]/95' : 'border-[#E2E7E2] bg-white' }}">
             <nav class="flex flex-col space-y-2 text-base font-medium">
-                <a href="{{ route('home') }}" @click="mobileOpen = false" class="px-3 py-2 rounded-lg hover:bg-stone-50 text-[#17231B]">Beranda</a>
-                <a href="{{ route('fields.index') }}" @click="mobileOpen = false" class="px-3 py-2 rounded-lg hover:bg-stone-50 text-[#17231B]">Daftar Lapangan</a>
-                <a href="{{ route('home') }}#cara-booking" @click="mobileOpen = false" class="px-3 py-2 rounded-lg hover:bg-stone-50 text-[#17231B]">Cara Booking</a>
-                <a href="{{ route('home') }}#faq" @click="mobileOpen = false" class="px-3 py-2 rounded-lg hover:bg-stone-50 text-[#17231B]">FAQ</a>
+                <a href="{{ route('home') }}" @click="mobileOpen = false" class="px-3 py-2 rounded-lg {{ request()->routeIs('home') ? 'text-white hover:bg-white/10' : 'text-[#17231B] hover:bg-stone-50' }}">Beranda</a>
+                <a href="{{ route('fields.index') }}" @click="mobileOpen = false" class="px-3 py-2 rounded-lg {{ request()->routeIs('home') ? 'text-white hover:bg-white/10' : 'text-[#17231B] hover:bg-stone-50' }}">Daftar Lapangan</a>
+                <a href="{{ route('home') }}#cara-booking" @click="mobileOpen = false" class="px-3 py-2 rounded-lg {{ request()->routeIs('home') ? 'text-white hover:bg-white/10' : 'text-[#17231B] hover:bg-stone-50' }}">Cara Booking</a>
+                <a href="{{ route('home') }}#faq" @click="mobileOpen = false" class="px-3 py-2 rounded-lg {{ request()->routeIs('home') ? 'text-white hover:bg-white/10' : 'text-[#17231B] hover:bg-stone-50' }}">FAQ</a>
             </nav>
 
             <div class="pt-4 border-t border-stone-200 flex flex-col gap-2">
@@ -112,6 +113,7 @@
             </div>
         </div>
     </header>
+    @endunless
 
     <!-- Global Alert / Flash Messages -->
     @if(session('success'))
@@ -138,6 +140,7 @@
     </main>
 
     <!-- Professional Footer -->
+    @unless(request()->routeIs('login'))
     <footer class="bg-white border-t border-[#E2E7E2] mt-20 pt-16 pb-12">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-10">
@@ -188,6 +191,7 @@
             </div>
         </div>
     </footer>
+    @endunless
 
     @livewireScripts
 </body>

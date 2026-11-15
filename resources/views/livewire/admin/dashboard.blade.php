@@ -1,4 +1,4 @@
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
     <!-- Admin Header -->
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
         <div>
@@ -22,7 +22,7 @@
     <!-- Metrics Cards -->
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-10">
         <!-- Metric 1: Lapangan -->
-        <div class="bg-white rounded-[24px] p-5 sm:p-6 border border-[#E2E7E2] shadow-sm">
+        <div class="bg-white rounded-2xl p-5 sm:p-6 border border-slate-200 border-l-4 border-l-emerald-600 shadow-sm">
             <span class="text-xs font-bold uppercase tracking-wider text-[#58695C] block">Lapangan Aktif</span>
             <div class="flex items-baseline gap-2 mt-2">
                 <span class="text-3xl font-extrabold text-[#17231B]">{{ $activeFields }}</span>
@@ -32,30 +32,30 @@
         </div>
 
         <!-- Metric 2: Hari Ini -->
-        <div class="bg-white rounded-[24px] p-5 sm:p-6 border border-[#E2E7E2] shadow-sm">
+        <div class="bg-white rounded-2xl p-5 sm:p-6 border border-slate-200 border-l-4 border-l-blue-600 shadow-sm">
             <span class="text-xs font-bold uppercase tracking-wider text-[#58695C] block">Booking Hari Ini</span>
             <div class="flex items-baseline gap-2 mt-2">
-                <span class="text-3xl font-extrabold text-[#2F6B3D]">{{ $bookingsToday }}</span>
+                <span class="text-3xl font-extrabold text-blue-600">{{ $bookingsToday }}</span>
                 <span class="text-xs text-stone-400">Sesi</span>
             </div>
             <span class="text-[11px] text-stone-400 mt-3 block">Berdasarkan waktu WIB</span>
         </div>
 
         <!-- Metric 3: Mendatang -->
-        <div class="bg-white rounded-[24px] p-5 sm:p-6 border border-[#E2E7E2] shadow-sm">
+        <div class="bg-white rounded-2xl p-5 sm:p-6 border border-slate-200 border-l-4 border-l-amber-500 shadow-sm">
             <span class="text-xs font-bold uppercase tracking-wider text-[#58695C] block">Jadwal Mendatang</span>
             <div class="flex items-baseline gap-2 mt-2">
-                <span class="text-3xl font-extrabold text-blue-600">{{ $upcomingBookings }}</span>
+                <span class="text-3xl font-extrabold text-amber-600">{{ $upcomingBookings }}</span>
                 <span class="text-xs text-stone-400">Terkonfirmasi</span>
             </div>
             <span class="text-[11px] text-stone-400 mt-3 block">Belum dimulai</span>
         </div>
 
         <!-- Metric 4: Selesai & Batal -->
-        <div class="bg-white rounded-[24px] p-5 sm:p-6 border border-[#E2E7E2] shadow-sm">
+        <div class="bg-white rounded-2xl p-5 sm:p-6 border border-slate-200 border-l-4 border-l-rose-500 shadow-sm">
             <span class="text-xs font-bold uppercase tracking-wider text-[#58695C] block">Selesai / Batal</span>
             <div class="flex items-baseline gap-2 mt-2">
-                <span class="text-3xl font-extrabold text-stone-800">{{ $completedBookings }}</span>
+                <span class="text-3xl font-extrabold text-rose-600">{{ $completedBookings }}</span>
                 <span class="text-xs text-rose-600">/ {{ $cancelledBookings }} Batal</span>
             </div>
             <span class="text-[11px] text-stone-400 mt-3 block">Histori tersimpan</span>
@@ -63,7 +63,7 @@
     </div>
 
     <!-- Recent Bookings Table -->
-    <div class="bg-white rounded-[26px] p-6 sm:p-8 border border-[#E2E7E2] shadow-sm">
+    <div class="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm">
         <div class="flex items-center justify-between mb-6">
             <div>
                 <h2 class="text-lg font-bold text-[#17231B]">Aktivitas Reservasi Terbaru</h2>
