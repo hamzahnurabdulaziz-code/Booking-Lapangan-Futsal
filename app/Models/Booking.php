@@ -29,6 +29,7 @@ class Booking extends Model
         'ends_at',
         'team_name',
         'notes',
+        'total_price',
         'status',
         'cancelled_at',
         'cancellation_reason',
@@ -45,6 +46,7 @@ class Booking extends Model
             'starts_at' => 'datetime',
             'ends_at' => 'datetime',
             'cancelled_at' => 'datetime',
+            'total_price' => 'integer',
             'status' => BookingStatus::class,
         ];
     }
@@ -96,6 +98,25 @@ class Booking extends Model
     {
         $tz = config('futsal.timezone', 'Asia/Jakarta');
         return $this->ends_at->copy()->setTimezone($tz);
+    }
+
+    /**
+     * Get formatted total price in Indonesian Rupiah.
+     */
+    public function getFormattedTotalPriceAttribute(): string
+    {
+        if ($this->total_price) {
+            return 'Rp ' . number_format($this->total_price, 0, ',', '.');
+        }
+
+        // Fallback calculation from field price and duration
+        if ($this->relationLoaded('field') && $this->field && $this->starts_at && $this->ends_at) {
+            $hours = max(1, $this->starts_at->diffInHours($this->ends_at));
+            $calculated = ($this->field->price_per_hour ?? 150000) * $hours;
+            return 'Rp ' . number_format($calculated, 0, ',', '.');
+        }
+
+        return 'Rp 0';
     }
 
     /**

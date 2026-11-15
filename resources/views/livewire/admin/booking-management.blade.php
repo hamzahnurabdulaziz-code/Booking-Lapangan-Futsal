@@ -5,24 +5,24 @@
             <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-stone-900 text-white mb-2">
                 <span>🛡️ Administrator</span>
             </div>
-            <h1 class="text-3xl font-extrabold text-[#17231B] tracking-tight">Manajemen Booking Lapangan</h1>
-            <p class="text-xs sm:text-sm text-[#58695C] mt-1">Filter, cari, dan verifikasi status pembatalan atau penyelesaian jadwal</p>
+            <h1 class="text-3xl font-extrabold text-stone-900 tracking-tight">Manajemen Booking Lapangan</h1>
+            <p class="text-xs sm:text-sm text-stone-600 mt-1">Filter, cari, dan verifikasi status pembatalan atau penyelesaian jadwal tim</p>
         </div>
     </div>
 
     <!-- Filters & Search Bar -->
-    <div class="bg-white rounded-[24px] p-5 border border-[#E2E7E2] shadow-sm mb-8 space-y-4">
+    <div class="bg-white rounded-[24px] p-5 border border-stone-200/90 shadow-sm mb-8 space-y-4">
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
             <!-- Search -->
             <div class="space-y-1">
-                <label for="adminSearch" class="block text-[11px] font-bold uppercase text-[#58695C]">Pencarian</label>
+                <label for="adminSearch" class="block text-[11px] font-bold uppercase text-stone-500">Pencarian</label>
                 <div class="relative">
                     <input 
                         wire:model.live.debounce.300ms="search" 
                         type="text" 
                         id="adminSearch" 
                         placeholder="Kode, pemesan, HP, tim..."
-                        class="w-full pl-9 pr-3 py-2 rounded-xl border border-stone-300 text-xs text-[#17231B] bg-stone-50/50 focus-ring"
+                        class="w-full pl-9 pr-3 py-2 rounded-xl border border-stone-300 text-xs text-stone-900 bg-stone-50/50 focus-ring"
                     >
                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-stone-400">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
@@ -32,8 +32,8 @@
 
             <!-- Field Filter -->
             <div class="space-y-1">
-                <label for="adminFieldFilter" class="block text-[11px] font-bold uppercase text-[#58695C]">Filter Lapangan</label>
-                <select wire:model.live="fieldId" id="adminFieldFilter" class="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs text-[#17231B] bg-stone-50/50 focus-ring">
+                <label for="adminFieldFilter" class="block text-[11px] font-bold uppercase text-stone-500">Filter Lapangan</label>
+                <select wire:model.live="fieldId" id="adminFieldFilter" class="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs text-stone-900 bg-stone-50/50 focus-ring">
                     <option value="all">Semua Lapangan</option>
                     @foreach($fields as $f)
                         <option value="{{ $f->id }}">{{ $f->name }}</option>
@@ -43,8 +43,8 @@
 
             <!-- Status Filter -->
             <div class="space-y-1">
-                <label for="adminStatusFilter" class="block text-[11px] font-bold uppercase text-[#58695C]">Filter Status</label>
-                <select wire:model.live="status" id="adminStatusFilter" class="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs text-[#17231B] bg-stone-50/50 focus-ring">
+                <label for="adminStatusFilter" class="block text-[11px] font-bold uppercase text-stone-500">Filter Status</label>
+                <select wire:model.live="status" id="adminStatusFilter" class="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs text-stone-900 bg-stone-50/50 focus-ring">
                     <option value="all">Semua Status</option>
                     <option value="confirmed">Terkonfirmasi (Confirmed)</option>
                     <option value="completed">Selesai (Completed)</option>
@@ -54,13 +54,13 @@
 
             <!-- Date Filter -->
             <div class="space-y-1">
-                <label for="adminDateFilter" class="block text-[11px] font-bold uppercase text-[#58695C]">Filter Tanggal</label>
+                <label for="adminDateFilter" class="block text-[11px] font-bold uppercase text-stone-500">Filter Tanggal</label>
                 <div class="flex gap-2">
                     <input 
                         wire:model.live="date" 
                         type="date" 
                         id="adminDateFilter" 
-                        class="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs text-[#17231B] bg-stone-50/50 focus-ring"
+                        class="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs text-stone-900 bg-stone-50/50 focus-ring"
                     >
                     @if($date)
                         <button type="button" wire:click="$set('date', '')" class="px-2.5 py-1 text-xs text-stone-500 hover:text-stone-800 bg-stone-100 rounded-lg">✕</button>
@@ -71,15 +71,16 @@
     </div>
 
     <!-- Booking Table Card -->
-    <div class="bg-white rounded-[26px] p-6 sm:p-8 border border-[#E2E7E2] shadow-sm">
+    <div class="bg-white rounded-[26px] p-6 sm:p-8 border border-stone-200/90 shadow-sm">
         <div class="overflow-x-auto">
             <table class="w-full text-left text-xs">
                 <thead>
-                    <tr class="border-b border-stone-200 text-[#58695C] uppercase tracking-wider font-semibold">
+                    <tr class="border-b border-stone-200 text-stone-500 uppercase tracking-wider font-semibold">
                         <th class="pb-3 px-3">Kode Booking</th>
                         <th class="pb-3 px-3">Pelanggan</th>
                         <th class="pb-3 px-3">Lapangan</th>
                         <th class="pb-3 px-3">Waktu Bermain</th>
+                        <th class="pb-3 px-3">Total Biaya</th>
                         <th class="pb-3 px-3">Tim / Catatan</th>
                         <th class="pb-3 px-3">Status</th>
                         <th class="pb-3 px-3 text-right">Aksi Admin</th>
@@ -92,11 +93,11 @@
                             $isAfterEnd = now()->greaterThanOrEqualTo($b->ends_at);
                         @endphp
                         <tr class="hover:bg-stone-50/60 transition-colors">
-                            <td class="py-4 px-3 font-mono font-bold text-[#17231B] select-all">
+                            <td class="py-4 px-3 font-mono font-bold text-stone-900 select-all">
                                 {{ $b->booking_code }}
                             </td>
                             <td class="py-4 px-3">
-                                <strong class="text-[#17231B] block font-semibold">{{ $b->user->name }}</strong>
+                                <strong class="text-stone-900 block font-semibold">{{ $b->user->name }}</strong>
                                 <span class="text-[11px] text-stone-400 block">{{ $b->user->phone }}</span>
                                 <span class="text-[10px] text-stone-400 block">{{ $b->user->email }}</span>
                             </td>
@@ -104,13 +105,17 @@
                                 {{ $b->field->name }}
                             </td>
                             <td class="py-4 px-3">
-                                <span class="block font-semibold text-[#17231B]">{{ $b->starts_at_local->format('d M Y') }}</span>
-                                <span class="text-[11px] font-bold text-[#2F6B3D] block">
+                                <span class="block font-semibold text-stone-900">{{ $b->starts_at_local->format('d M Y') }}</span>
+                                <span class="text-[11px] font-bold text-emerald-700 block">
                                     {{ $b->starts_at_local->format('H:i') }} - {{ $b->ends_at_local->format('H:i') }} WIB
                                 </span>
                             </td>
+                            <td class="py-4 px-3 font-bold text-stone-900 whitespace-nowrap">
+                                {{ $b->formatted_total_price }}
+                                <span class="text-[10px] text-stone-400 block font-normal">{{ $b->duration_hours }} Jam</span>
+                            </td>
                             <td class="py-4 px-3 max-w-[180px]">
-                                <span class="font-bold text-[#17231B] block truncate">{{ $b->team_name ?: '—' }}</span>
+                                <span class="font-bold text-stone-900 block truncate">{{ $b->team_name ?: '—' }}</span>
                                 <span class="text-[11px] text-stone-500 block truncate">{{ $b->notes ?: 'Tidak ada catatan' }}</span>
                                 @if($b->status === \App\Enums\BookingStatus::Cancelled)
                                     <span class="text-[10px] text-rose-600 block mt-0.5 truncate">Alasan: {{ $b->cancellation_reason }}</span>
@@ -158,7 +163,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="7" class="py-8 text-center text-stone-400">Tidak ada booking yang sesuai dengan kriteria filter.</td>
+                            <td colspan="8" class="py-8 text-center text-stone-400">Tidak ada booking yang sesuai dengan kriteria filter.</td>
                         </tr>
                     @endforelse
                 </tbody>
@@ -184,15 +189,15 @@
                 </div>
 
                 <div class="text-center">
-                    <h3 class="text-lg font-bold text-[#17231B]">Batalkan Booking (Admin)</h3>
-                    <p class="text-xs text-[#58695C] mt-1.5 leading-relaxed">
-                        Anda akan membatalkan booking <strong class="text-[#17231B]">{{ $bookingToCancel->booking_code }}</strong> untuk pelanggan <strong class="text-[#17231B]">{{ $bookingToCancel->user->name }}</strong>.
+                    <h3 class="text-lg font-bold text-stone-900">Batalkan Booking (Admin)</h3>
+                    <p class="text-xs text-stone-600 mt-1.5 leading-relaxed">
+                        Anda akan membatalkan booking <strong class="text-stone-900">{{ $bookingToCancel->booking_code }}</strong> untuk pelanggan <strong class="text-stone-900">{{ $bookingToCancel->user->name }}</strong>.
                     </p>
                 </div>
 
                 <form wire:submit="submitCancel" class="space-y-4">
                     <div>
-                        <label for="cancelReasonInput" class="block text-xs font-semibold uppercase tracking-wider text-[#17231B] mb-1.5">
+                        <label for="cancelReasonInput" class="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-1.5">
                             Alasan Pembatalan <span class="text-rose-600">* Wajib Diisi</span>
                         </label>
                         <textarea 
@@ -201,7 +206,7 @@
                             rows="3" 
                             required 
                             maxlength="500"
-                            placeholder="Contoh: Perbaikan darurat lampu lapangan / Maintenance mendadak..."
+                            placeholder="Contoh: Perbaikan darurat pencahayaan LED lapangan / Maintenance..."
                             class="w-full px-3.5 py-2.5 rounded-xl border border-stone-300 text-xs focus-ring bg-stone-50/50 @error('cancellationReason') border-rose-500 @enderror"
                         ></textarea>
                         @error('cancellationReason')
@@ -213,7 +218,7 @@
                         <button 
                             type="button" 
                             wire:click="closeCancelModal"
-                            class="w-full sm:w-auto px-4 py-2.5 rounded-xl border border-stone-300 text-stone-700 text-xs font-bold"
+                            class="w-full sm:w-auto px-4 py-2.5 rounded-xl border border-stone-300 text-stone-700 text-xs font-bold hover:bg-stone-50"
                         >
                             Tutup
                         </button>

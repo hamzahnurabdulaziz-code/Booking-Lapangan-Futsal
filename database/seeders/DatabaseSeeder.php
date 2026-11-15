@@ -47,6 +47,7 @@ class DatabaseSeeder extends Seeder
                 'slug' => 'lapangan-vinyl-premium-a',
                 'type' => 'indoor',
                 'description' => 'Lapangan indoor beralaskan vinyl standar kompetisi nasional dengan daya cengkeram optimal dan peredam benturan ramah sendi. Cocok untuk pertandingan kompetitif maupun latihan intensif.',
+                'price_per_hour' => 175000,
                 'facilities' => [
                     'Lantai Vinyl Taraflex Standar FIFA',
                     'Pencahayaan LED 800 Lux Anti-Silau',
@@ -63,6 +64,7 @@ class DatabaseSeeder extends Seeder
                 'slug' => 'lapangan-interlock-pro-b',
                 'type' => 'indoor',
                 'description' => 'Lapangan futsal indoor beralaskan modular interlock polypropylene elastis tinggi. Menjamin pantulan bola konsisten dan sirkulasi udara sejuk untuk kenyamanan bertanding.',
+                'price_per_hour' => 150000,
                 'facilities' => [
                     'Lantai Modular Interlock Futsal',
                     'Jaring Pengaman Keliling 360 Derajat',
@@ -79,6 +81,7 @@ class DatabaseSeeder extends Seeder
                 'slug' => 'lapangan-rumput-sintetis-c',
                 'type' => 'outdoor',
                 'description' => 'Lapangan outdoor dengan rumput sintetis monofilament tebal 50mm dengan infill rubber merata. Suasana bermain terbuka yang segar dengan lampu sorot bertenaga tinggi untuk main malam.',
+                'price_per_hour' => 125000,
                 'facilities' => [
                     'Rumput Sintetis Monofilament 50mm',
                     '4 Tiang Lampu Sorot Malam Hari',
@@ -94,6 +97,7 @@ class DatabaseSeeder extends Seeder
                 'slug' => 'lapangan-mini-arena-d',
                 'type' => 'indoor',
                 'description' => 'Lapangan mini latihan indoor yang saat ini sedang dalam masa peremajaan lantai dan pengecatan ulang berkala. Tidak dapat dipesan untuk sementara waktu.',
+                'price_per_hour' => 100000,
                 'facilities' => [
                     'Lantai Vinyl Standar',
                     'Gawang Mini Latihan',
@@ -120,15 +124,16 @@ class DatabaseSeeder extends Seeder
         $tomorrow19Local = Carbon::now($tz)->addDay()->setTime(19, 0, 0);
         $tomorrow21Local = $tomorrow19Local->copy()->addHours(2);
         Booking::updateOrCreate(
-            ['booking_code' => 'FK-' . $tomorrow19Local->format('Ymd') . '-A19'],
+            ['request_key' => 'b1000000-0000-0000-0000-000000000001'],
             [
-                'request_key' => 'b1000000-0000-0000-0000-000000000001',
+                'booking_code' => 'FK-' . $tomorrow19Local->format('Ymd') . '-A19',
                 'user_id' => $customer->id,
                 'field_id' => $fieldA->id,
                 'starts_at' => $tomorrow19Local->copy()->setTimezone('UTC'),
                 'ends_at' => $tomorrow21Local->copy()->setTimezone('UTC'),
                 'team_name' => 'Garuda Muda FC',
                 'notes' => 'Tolong siapkan 10 rompi hijau dan bola standar match.',
+                'total_price' => 350000,
                 'status' => BookingStatus::Confirmed,
             ]
         );
@@ -137,15 +142,16 @@ class DatabaseSeeder extends Seeder
         $pastLocal = Carbon::now($tz)->subDays(2)->setTime(16, 0, 0);
         $pastEndLocal = $pastLocal->copy()->addHours(2);
         Booking::updateOrCreate(
-            ['booking_code' => 'FK-' . $pastLocal->format('Ymd') . '-B16'],
+            ['request_key' => 'b1000000-0000-0000-0000-000000000002'],
             [
-                'request_key' => 'b1000000-0000-0000-0000-000000000002',
+                'booking_code' => 'FK-' . $pastLocal->format('Ymd') . '-B16',
                 'user_id' => $customer->id,
                 'field_id' => $fieldB->id,
                 'starts_at' => $pastLocal->copy()->setTimezone('UTC'),
                 'ends_at' => $pastEndLocal->copy()->setTimezone('UTC'),
                 'team_name' => 'Rajawali Futsal Club',
                 'notes' => 'Latihan rutin mingguan.',
+                'total_price' => 300000,
                 'status' => BookingStatus::Completed,
             ]
         );
@@ -154,15 +160,16 @@ class DatabaseSeeder extends Seeder
         $cancelLocal = Carbon::now($tz)->addDays(3)->setTime(14, 0, 0);
         $cancelEndLocal = $cancelLocal->copy()->addHour();
         Booking::updateOrCreate(
-            ['booking_code' => 'FK-' . $cancelLocal->format('Ymd') . '-A14'],
+            ['request_key' => 'b1000000-0000-0000-0000-000000000003'],
             [
-                'request_key' => 'b1000000-0000-0000-0000-000000000003',
+                'booking_code' => 'FK-' . $cancelLocal->format('Ymd') . '-A14',
                 'user_id' => $customer->id,
                 'field_id' => $fieldA->id,
                 'starts_at' => $cancelLocal->copy()->setTimezone('UTC'),
                 'ends_at' => $cancelEndLocal->copy()->setTimezone('UTC'),
                 'team_name' => 'Bintang Timur Squad',
                 'notes' => 'Batal karena jadwal bentrok dengan turnamen antar-kampus.',
+                'total_price' => 175000,
                 'status' => BookingStatus::Cancelled,
                 'cancelled_at' => now(),
                 'cancellation_reason' => 'Perubahan agenda internal tim.',

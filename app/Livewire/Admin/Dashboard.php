@@ -28,9 +28,13 @@ class Dashboard extends Component
         $completedBookings = Booking::where('status', BookingStatus::Completed)->count();
         $cancelledBookings = Booking::where('status', BookingStatus::Cancelled)->count();
 
+        // Calculate total confirmed + completed value
+        $totalEstimatedValue = Booking::whereIn('status', [BookingStatus::Confirmed, BookingStatus::Completed])
+            ->sum('total_price');
+
         $recentBookings = Booking::with(['field', 'user'])
             ->orderBy('created_at', 'desc')
-            ->take(6)
+            ->take(8)
             ->get();
 
         return view('livewire.admin.dashboard', [
@@ -40,6 +44,7 @@ class Dashboard extends Component
             'upcomingBookings' => $upcomingBookings,
             'completedBookings' => $completedBookings,
             'cancelledBookings' => $cancelledBookings,
+            'totalEstimatedValue' => $totalEstimatedValue,
             'recentBookings' => $recentBookings,
         ]);
     }

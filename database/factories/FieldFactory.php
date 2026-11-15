@@ -27,6 +27,7 @@ class FieldFactory extends Factory
             'slug' => Str::slug($name) . '-' . fake()->unique()->numberBetween(100, 999),
             'type' => fake()->randomElement(['indoor', 'outdoor']),
             'description' => fake()->paragraph(),
+            'price_per_hour' => 150000,
             'facilities' => ['Lantai Standar', 'Penerangan LED', 'Ruang Ganti'],
             'image_path' => null,
             'is_active' => true,

@@ -1,8 +1,8 @@
 <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
     @if($confirmedBooking)
         <!-- SUCCESS STATE / HALAMAN BERHASIL -->
-        <div class="bg-white rounded-[28px] p-8 sm:p-12 border border-[#E2E7E2] shadow-sm text-center space-y-6">
-            <div class="w-16 h-16 rounded-full bg-emerald-100 text-[#2F6B3D] flex items-center justify-center font-bold text-3xl mx-auto shadow-sm">
+        <div class="bg-white rounded-[28px] p-8 sm:p-12 border border-stone-200/90 shadow-sm text-center space-y-6">
+            <div class="w-16 h-16 rounded-full bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold text-3xl mx-auto shadow-sm">
                 ✓
             </div>
 
@@ -10,16 +10,16 @@
                 <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
                     Status: Terkonfirmasi
                 </span>
-                <h1 class="text-2xl sm:text-3xl font-extrabold text-[#17231B] tracking-tight mt-3">Booking Berhasil Disimpan!</h1>
-                <p class="text-xs sm:text-sm text-[#58695C] mt-1 max-w-md mx-auto">
-                    Jadwal lapangan Anda telah diamankan di sistem. Tunjukkan kode booking ini saat tiba di FutsalKita Arena.
+                <h1 class="text-2xl sm:text-3xl font-extrabold text-stone-900 tracking-tight mt-3">Booking Berhasil Disimpan!</h1>
+                <p class="text-xs sm:text-sm text-stone-600 mt-1 max-w-md mx-auto leading-relaxed">
+                    Jadwal lapangan tim Anda telah dikunci di sistem. Tunjukkan kode booking ini kepada petugas saat tiba di FutsalKita Arena.
                 </p>
             </div>
 
             <!-- Booking Code Box -->
-            <div class="p-6 rounded-2xl bg-stone-50 border border-stone-200 max-w-md mx-auto">
-                <span class="block text-[11px] font-bold uppercase tracking-wider text-[#58695C]">Kode Booking Resmi</span>
-                <span class="block text-2xl sm:text-3xl font-black text-[#2F6B3D] tracking-widest mt-1 select-all font-mono">
+            <div class="p-6 rounded-2xl bg-[#F8FAF8] border border-stone-200 max-w-md mx-auto">
+                <span class="block text-[11px] font-bold uppercase tracking-wider text-stone-500">Kode Booking Resmi</span>
+                <span class="block text-2xl sm:text-3xl font-black text-emerald-800 tracking-widest mt-1 select-all font-mono">
                     {{ $confirmedBooking->booking_code }}
                 </span>
             </div>
@@ -27,24 +27,28 @@
             <!-- Detail Grid -->
             <div class="max-w-md mx-auto border-t border-b border-stone-100 py-4 space-y-2.5 text-xs text-left">
                 <div class="flex justify-between">
-                    <span class="text-[#58695C]">Lapangan:</span>
-                    <strong class="text-[#17231B]">{{ $confirmedBooking->field->name }}</strong>
+                    <span class="text-stone-500">Lapangan:</span>
+                    <strong class="text-stone-900">{{ $confirmedBooking->field->name }}</strong>
                 </div>
                 <div class="flex justify-between">
-                    <span class="text-[#58695C]">Waktu Bermain:</span>
-                    <strong class="text-[#17231B]">
+                    <span class="text-stone-500">Waktu Bermain:</span>
+                    <strong class="text-stone-900">
                         {{ $confirmedBooking->starts_at_local->translatedFormat('d M Y') }}, {{ $confirmedBooking->starts_at_local->format('H:i') }} – {{ $confirmedBooking->ends_at_local->format('H:i') }} WIB
                     </strong>
                 </div>
+                <div class="flex justify-between">
+                    <span class="text-stone-500">Total Tarif:</span>
+                    <strong class="text-emerald-800 font-bold text-sm">{{ $confirmedBooking->formatted_total_price }}</strong>
+                </div>
                 @if($confirmedBooking->team_name)
                     <div class="flex justify-between">
-                        <span class="text-[#58695C]">Nama Tim:</span>
-                        <strong class="text-[#17231B]">{{ $confirmedBooking->team_name }}</strong>
+                        <span class="text-stone-500">Nama Tim:</span>
+                        <strong class="text-stone-900">{{ $confirmedBooking->team_name }}</strong>
                     </div>
                 @endif
                 <div class="flex justify-between">
-                    <span class="text-[#58695C]">Pemesan:</span>
-                    <strong class="text-[#17231B]">{{ $confirmedBooking->user->name }} ({{ $confirmedBooking->user->phone }})</strong>
+                    <span class="text-stone-500">Pemesan:</span>
+                    <strong class="text-stone-900">{{ $confirmedBooking->user->name }} ({{ $confirmedBooking->user->phone }})</strong>
                 </div>
             </div>
 
@@ -52,7 +56,7 @@
             <div class="flex flex-col sm:flex-row items-center justify-center gap-3 pt-4">
                 <a 
                     href="{{ route('customer.bookings') }}" 
-                    class="w-full sm:w-auto px-6 py-3 rounded-xl bg-[#2F6B3D] hover:bg-[#245430] text-white text-xs font-bold shadow-sm transition-colors focus-ring"
+                    class="w-full sm:w-auto px-6 py-3 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold shadow-sm transition-colors focus-ring"
                 >
                     Lihat di Riwayat Booking Saya
                 </a>
@@ -66,11 +70,11 @@
         </div>
     @else
         <!-- SUMMARY & CONFIRMATION FORM -->
-        <div class="bg-white rounded-[28px] p-6 sm:p-10 border border-[#E2E7E2] shadow-sm space-y-8">
+        <div class="bg-white rounded-[28px] p-6 sm:p-10 border border-stone-200/90 shadow-sm space-y-8">
             <div class="border-b border-stone-100 pb-5">
-                <span class="text-xs font-bold uppercase tracking-wider text-[#2F6B3D]">Konfirmasi Terakhir</span>
-                <h1 class="text-2xl sm:text-3xl font-extrabold text-[#17231B] tracking-tight mt-1">Ringkasan Booking Lapangan</h1>
-                <p class="text-xs sm:text-sm text-[#58695C] mt-1">Periksa kembali detail jadwal sebelum mengonfirmasi reservasi tim Anda.</p>
+                <span class="text-xs font-bold uppercase tracking-wider text-emerald-700">Konfirmasi Terakhir</span>
+                <h1 class="text-2xl sm:text-3xl font-extrabold text-stone-900 tracking-tight mt-1">Ringkasan Booking Lapangan</h1>
+                <p class="text-xs sm:text-sm text-stone-600 mt-1">Periksa kembali detail jadwal sebelum mengonfirmasi reservasi tim Anda.</p>
             </div>
 
             <!-- Conflict / Error Alert -->
@@ -93,28 +97,38 @@
                 </div>
             @enderror
 
-            <!-- Schedule Card -->
+            <!-- Schedule & Pricing Summary Card -->
             @if($field)
-                <div class="p-5 rounded-2xl bg-[#F7F7F2] border border-[#E2E7E2] space-y-3">
+                @php
+                    $calcTotal = (int) ($field->price_per_hour ?? 150000) * $durationHours;
+                @endphp
+                <div class="p-5 rounded-2xl bg-[#F8FAF8] border border-stone-200 space-y-4">
                     <div class="flex items-center justify-between">
-                        <span class="text-xs font-bold text-[#17231B]">{{ $field->name }}</span>
+                        <span class="text-sm font-bold text-stone-900">{{ $field->name }}</span>
                         <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase bg-stone-200 text-stone-700">
                             {{ ucfirst($field->type) }}
                         </span>
                     </div>
 
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs text-[#58695C] pt-2 border-t border-stone-200/70">
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs text-stone-600 pt-3 border-t border-stone-200/70">
                         <div>
-                            <span>Tanggal:</span>
-                            <strong class="text-[#17231B] block font-semibold">
+                            <span class="text-stone-500">Tanggal:</span>
+                            <strong class="text-stone-900 block font-semibold">
                                 {{ \Carbon\Carbon::parse($selectedDate)->translatedFormat('l, d F Y') }}
                             </strong>
                         </div>
                         <div>
-                            <span>Jam & Durasi:</span>
-                            <strong class="text-[#2F6B3D] block font-semibold">
+                            <span class="text-stone-500">Jam & Durasi:</span>
+                            <strong class="text-emerald-700 block font-semibold">
                                 {{ sprintf('%02d:00 – %02d:00 WIB', $startHour, $endHour) }} ({{ $durationHours }} Jam)
                             </strong>
+                        </div>
+                        <div>
+                            <span class="text-stone-500">Total Tarif:</span>
+                            <strong class="text-emerald-800 block font-black text-sm">
+                                Rp {{ number_format($calcTotal, 0, ',', '.') }}
+                            </strong>
+                            <span class="text-[10px] text-stone-400">({{ $durationHours }} × {{ $field->formatted_price }})</span>
                         </div>
                     </div>
                 </div>
@@ -125,18 +139,18 @@
                 <!-- User Profile Meta (Non-editable, server verified) -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 rounded-2xl bg-stone-50 border border-stone-200 text-xs">
                     <div>
-                        <span class="text-[#58695C] block">Nama Pemesan:</span>
-                        <strong class="text-[#17231B]">{{ auth()->user()->name }}</strong>
+                        <span class="text-stone-500 block">Nama Pemesan:</span>
+                        <strong class="text-stone-900 font-semibold">{{ auth()->user()->name }}</strong>
                     </div>
                     <div>
-                        <span class="text-[#58695C] block">Email & No. HP:</span>
-                        <strong class="text-[#17231B]">{{ auth()->user()->email }} • {{ auth()->user()->phone }}</strong>
+                        <span class="text-stone-500 block">Email & No. HP:</span>
+                        <strong class="text-stone-900 font-semibold">{{ auth()->user()->email }} • {{ auth()->user()->phone }}</strong>
                     </div>
                 </div>
 
                 <!-- Team Name Input -->
                 <div>
-                    <label for="teamName" class="block text-xs font-semibold uppercase tracking-wider text-[#17231B] mb-1.5">
+                    <label for="teamName" class="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-1.5">
                         Nama Tim <span class="text-stone-400 font-normal">(Opsional, maks. 100 karakter)</span>
                     </label>
                     <input 
@@ -145,7 +159,7 @@
                         id="teamName" 
                         maxlength="100"
                         placeholder="Contoh: Garuda Muda FC"
-                        class="w-full px-4 py-3 rounded-xl border border-stone-300 focus-ring text-sm text-[#17231B] placeholder-stone-400 bg-stone-50/50 @error('teamName') border-rose-500 @enderror"
+                        class="w-full px-4 py-3 rounded-xl border border-stone-300 focus-ring text-sm text-stone-900 placeholder-stone-400 bg-stone-50/50 @error('teamName') border-rose-500 @enderror"
                     >
                     @error('teamName')
                         <p class="text-xs text-rose-600 mt-1">{{ $message }}</p>
@@ -154,7 +168,7 @@
 
                 <!-- Notes Input -->
                 <div>
-                    <label for="notes" class="block text-xs font-semibold uppercase tracking-wider text-[#17231B] mb-1.5">
+                    <label for="notes" class="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-1.5">
                         Catatan Khusus <span class="text-stone-400 font-normal">(Opsional, maks. 500 karakter)</span>
                     </label>
                     <textarea 
@@ -162,8 +176,8 @@
                         id="notes" 
                         rows="3"
                         maxlength="500"
-                        placeholder="Contoh: Tolong siapkan rompi latihan warna biru atau bola cadangan..."
-                        class="w-full px-4 py-3 rounded-xl border border-stone-300 focus-ring text-sm text-[#17231B] placeholder-stone-400 bg-stone-50/50 @error('notes') border-rose-500 @enderror"
+                        placeholder="Contoh: Tolong siapkan rompi latihan warna biru atau bola tambahan..."
+                        class="w-full px-4 py-3 rounded-xl border border-stone-300 focus-ring text-sm text-stone-900 placeholder-stone-400 bg-stone-50/50 @error('notes') border-rose-500 @enderror"
                     ></textarea>
                     @error('notes')
                         <p class="text-xs text-rose-600 mt-1">{{ $message }}</p>
@@ -171,22 +185,22 @@
                 </div>
 
                 <!-- Terms reminder -->
-                <div class="p-4 rounded-xl bg-emerald-50/60 border border-emerald-200/80 text-[11px] text-emerald-950 space-y-1">
+                <div class="p-4 rounded-xl bg-emerald-50/80 border border-emerald-200/80 text-xs text-emerald-950 space-y-1">
                     <div class="font-bold">Ketentuan Reservasi FutsalKita:</div>
                     <div>• Booking langsung berstatus Terkonfirmasi tanpa persetujuan manual admin.</div>
-                    <div>• Jika berhalangan, Anda dapat membatalkan booking sebelum waktu mulai melalui menu riwayat.</div>
+                    <div>• Jika berhalangan, Anda dapat membatalkan booking sebelum waktu mulai melalui menu riwayat booking.</div>
                 </div>
 
                 <!-- Submit Button -->
                 <div class="pt-2 flex flex-col sm:flex-row items-center justify-between gap-4">
-                    <a href="{{ route('fields.show', $field->slug ?? '') }}" class="text-xs font-semibold text-stone-500 hover:text-stone-800">
+                    <a href="{{ route('fields.show', $field->slug ?? '') }}" class="text-xs font-bold text-stone-600 hover:text-stone-900">
                         &larr; Ubah Tanggal / Jam
                     </a>
 
                     <button 
                         type="submit" 
                         wire:loading.attr="disabled"
-                        class="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-[#2F6B3D] hover:bg-[#245430] text-white text-sm font-semibold shadow-md focus-ring transition-all disabled:opacity-60 flex items-center justify-center gap-2"
+                        class="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-xs sm:text-sm font-bold shadow-md focus-ring transition-all disabled:opacity-60 flex items-center justify-center gap-2"
                     >
                         <span wire:loading.remove wire:target="submitBooking">Konfirmasi & Simpan Booking</span>
                         <span wire:loading wire:target="submitBooking" class="flex items-center gap-2">
