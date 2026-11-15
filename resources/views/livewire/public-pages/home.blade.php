@@ -1,34 +1,56 @@
 <div class="relative overflow-hidden">
     <!-- Hero Section with Deep Futsal Atmosphere -->
-    <section class="relative min-h-[580px] lg:min-h-[640px] flex items-center justify-center bg-stone-900 text-white px-4 sm:px-6 lg:px-8 pt-12 pb-28 lg:pb-36">
+    <section class="relative isolate min-h-[580px] lg:min-h-[640px] flex items-center justify-center overflow-hidden bg-gradient-to-b from-[#092B21] via-[#0D3B2E] to-[#061F18] text-white px-4 sm:px-6 lg:px-8 pt-12 pb-28 lg:pb-36">
         <!-- Background Image with Overlay -->
         <div class="absolute inset-0 z-0">
             <img 
                 src="{{ asset('images/placeholder-field.svg') }}" 
                 alt="Arena Lapangan Futsal FutsalKita" 
-                class="w-full h-full object-cover opacity-35"
+                class="w-full h-full object-cover opacity-20"
                 loading="eager"
             >
-            <div class="absolute inset-0 bg-gradient-to-t from-[#17231B] via-[#17231B]/70 to-[#17231B]/85"></div>
+            <div class="absolute inset-0 bg-gradient-to-b from-[#092B21]/85 via-[#0D3B2E]/80 to-[#061F18]/95"></div>
+            <div class="pointer-events-none absolute left-1/2 top-1/2 h-[600px] w-[600px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-emerald-500/15 blur-[120px]"></div>
+            <div class="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white/5 to-transparent opacity-40"></div>
+            <svg class="pointer-events-none absolute inset-0 h-full w-full text-white/10" viewBox="0 0 1200 700" fill="none" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+                <defs>
+                    <linearGradient id="stadium-beam" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0" stop-color="#A7F3D0" stop-opacity=".2" />
+                        <stop offset="1" stop-color="#A7F3D0" stop-opacity="0" />
+                    </linearGradient>
+                </defs>
+                <path d="M0 0H120L390 700H0Z" fill="url(#stadium-beam)" />
+                <path d="M115 0H195L475 700H385Z" fill="url(#stadium-beam)" />
+                <path d="M1080 0H1200V700H810Z" fill="url(#stadium-beam)" />
+                <path d="M1005 0H1085L815 700H725Z" fill="url(#stadium-beam)" />
+                <rect x="90" y="40" width="1020" height="620" rx="28" stroke="currentColor" />
+                <line x1="600" y1="40" x2="600" y2="660" stroke="currentColor" />
+                <circle cx="600" cy="350" r="110" stroke="currentColor" />
+            </svg>
         </div>
 
-        <div class="relative z-10 max-w-5xl mx-auto text-center space-y-6">
-            <!-- Badge -->
-            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs sm:text-sm font-medium text-emerald-300">
-                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                <span>Jadwal Real-Time • Langsung Terkonfirmasi</span>
+        <div class="relative z-10 mx-auto w-full max-w-lg rounded-[28px] border border-emerald-300/45 bg-slate-950/30 px-6 py-8 text-center shadow-[0_24px_80px_rgba(16,185,129,0.14)] backdrop-blur-md lg:max-w-2xl sm:px-10 sm:py-10">
+            <div class="space-y-6">
+                <!-- Badge -->
+                <div class="inline-flex items-center gap-2 rounded-full border border-emerald-400/30 bg-emerald-500/10 px-4 py-1.5 text-xs font-semibold text-emerald-200 shadow-[0_0_15px_rgba(16,185,129,0.2)] backdrop-blur-md sm:text-sm">
+                    <span class="relative flex h-2 w-2" aria-hidden="true">
+                        <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75"></span>
+                        <span class="relative inline-flex h-2 w-2 rounded-full bg-emerald-300"></span>
+                    </span>
+                    <span>Jadwal Real-Time • Langsung Terkonfirmasi</span>
+                </div>
+
+                <!-- Headline -->
+                <h1 class="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white leading-tight">
+                    Jadwal Main Aman, <br class="hidden sm:inline" />
+                    <span class="bg-gradient-to-r from-emerald-400 via-teal-300 to-lime-400 bg-clip-text text-transparent drop-shadow-sm">Tinggal Ajak Tim.</span>
+                </h1>
+
+                <!-- Description -->
+                <p class="max-w-2xl mx-auto text-base sm:text-lg text-emerald-100/80 leading-relaxed font-light">
+                    Pilih lapangan dan waktu bermain. Simpan booking timmu dalam beberapa langkah mudah tanpa khawatir jadwal bertabrakan.
+                </p>
             </div>
-
-            <!-- Headline -->
-            <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-tight">
-                Jadwal Main Aman, <br class="hidden sm:inline" />
-                <span class="text-emerald-400">Tinggal Ajak Tim.</span>
-            </h1>
-
-            <!-- Description -->
-            <p class="max-w-2xl mx-auto text-base sm:text-lg text-stone-300 leading-relaxed font-normal">
-                Pilih lapangan dan waktu bermain. Simpan booking timmu dalam beberapa langkah mudah tanpa khawatir jadwal bertabrakan.
-            </p>
         </div>
     </section>
 
