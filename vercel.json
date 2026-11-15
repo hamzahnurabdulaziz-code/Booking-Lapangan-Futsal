@@ -1,21 +1,18 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "version": 2,
-  "framework": null,
-  "buildCommand": "",
-  "outputDirectory": "",
-  "git": {
-    "deploymentEnabled": true
-  },
   "services": {
-    "web": {
-      "image": "dockerfile"
+    "app": {
+      "root": ".",
+      "entrypoint": "Dockerfile",
+      "runtime": "container"
     }
   },
-  "routes": [
+  "rewrites": [
     {
-      "src": "/(.*)",
-      "dest": "/"
+      "source": "/(.*)",
+      "destination": {
+        "service": "app"
+      }
     }
   ]
 }
